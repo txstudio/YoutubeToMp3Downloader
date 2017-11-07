@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube 影片轉換 MP3 線上版本</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        * {
+            font-family: "Microsoft JhengHei";
+        }
+        .container {
+            padding-top: 50px;
+        }
+    </style>
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+</head>
+<body>
+
+    <div class="container body-content">
+        <p>輸入 Youtube 影片連結 / 點選按鈕</p>
+
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control" id="youtubeUrl" placeholder="請輸入 Youtube 影片網址" />
+            </div>
+            <button type="button" class="btn btn-primary" id="getMp3">
+                取得 MP3　<span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+            </button>
+        </form>
+    </div>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.blockUI.js"></script>
+    <script>
+        $(function () {
+            var _button = $("#getMp3");
+            var _youtubeUrl = $("#youtubeUrl");
+            var _downloadButton = $("#download-button");
+
+            _button.click(function () { 
+                var _url = _youtubeUrl.val();
+
+                if (_url === "") {
+                    alert("請輸入 Youtube 影片連結！");
+                } else {
+                    $.blockUI({ message: "<div style=\"padding:20px;\">影片轉換中</div>" });
+                    $.ajax({
+                        url: "/Home/CreateDownloadUrl",
+                        data: { Url: _youtubeUrl.val() },
+                        type: "POST",
+                        success: function (res) {
+                            $.unblockUI();
+                            location.href = ("/Home/DownloadMp3File/" + res);
+                        },
+                        error: function (res) {
+                            $.unblockUI();
+                            alert("轉換失敗，請確認輸入的影片連結是否正確！");
+                        }
+                    });
+                }
+
+            });
+        });
+    </script>
+</body>
+</html>
